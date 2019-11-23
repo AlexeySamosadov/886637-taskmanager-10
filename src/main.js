@@ -2,7 +2,7 @@
 
 const TASK_TIMES = 3;
 
-const createSiteMenuTemplate = () => {
+const getMenuTemplate = () => {
   return (
     `<section class="control__btn-wrap">
           <input
@@ -35,7 +35,7 @@ const createSiteMenuTemplate = () => {
   );
 };
 
-const createSiteMainFilterTemplate = () => {
+const getMainFilterTemplate = () => {
   return (
     `<section class="main__filter filter container">
         <input
@@ -108,7 +108,7 @@ const createSiteMainFilterTemplate = () => {
   );
 };
 
-const createBoardTemplate = () => {
+const getBoardTemplate = () => {
   return (
     `<section class="board container">
         <div class="board__filter-list">
@@ -122,7 +122,7 @@ const createBoardTemplate = () => {
   );
 };
 
-const createTaskEditTemplate = () => {
+const getCardEditTemplate = () => {
   return (
     `          <article class="card card--edit card--yellow card--repeat">
             <form class="card__form" method="get">
@@ -382,7 +382,7 @@ const createTaskEditTemplate = () => {
   );
 };
 
-const createCardBlackTemplate = () => {
+const getCardBlackTemplate = () => {
   return (
     `          <article class="card card--black">
             <div class="card__form">
@@ -452,28 +452,28 @@ const createCardBlackTemplate = () => {
   );
 };
 
-const createLoadMoreButtonTemplate = () => {
+const getLoadButtonTemplate = () => {
   return (`
   <button class="load-more" type="button">load more</button>
   `);
 };
 
 const render = (container, template, position = `beforeend`) => {
-  container.insertAdjacentHTML(position, template());
+  container.insertAdjacentHTML(position, template);
 };
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
-render(siteHeaderElement, createSiteMenuTemplate);
-render(siteMainElement, createSiteMainFilterTemplate);
-render(siteMainElement, createBoardTemplate);
+render(siteHeaderElement, getMenuTemplate());
+render(siteMainElement, getMainFilterTemplate());
+render(siteMainElement, getBoardTemplate());
 
 const siteBoardElement = siteMainElement.querySelector(`.board`);
 const siteBoardTaskElement = siteBoardElement.querySelector(`.board__tasks`);
 
-render(siteBoardTaskElement, createTaskEditTemplate);
-new Array(TASK_TIMES).fill(``).forEach(() => render(siteBoardTaskElement, createCardBlackTemplate));
+render(siteBoardTaskElement, getCardEditTemplate());
+new Array(TASK_TIMES).fill(`5`).forEach(() => render(siteBoardTaskElement, getCardBlackTemplate()));
 
 
-render(siteBoardElement, createLoadMoreButtonTemplate);
+render(siteBoardElement, getLoadButtonTemplate());
