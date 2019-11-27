@@ -1,4 +1,4 @@
-export const getCardBlackTemplate = () => {
+export const getCardTemplate = () => {
   return (
     `          <article class="card card--black">
             <div class="card__form">
