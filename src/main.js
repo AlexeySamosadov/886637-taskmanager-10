@@ -1,4 +1,4 @@
-import {render} from './components/util.js';
+import {render} from './util.js';
 import {getMenuTemplate} from './components/menu.js';
 import {getMainFilterTemplate} from './components/filter.js';
 import {getBoardTemplate} from './components/board.js';
