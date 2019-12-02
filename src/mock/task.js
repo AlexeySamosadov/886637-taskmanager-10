@@ -32,7 +32,7 @@ const getRandomNumber = function (minNumber, maxNumber) {
 
     return Math.floor(Math.random() * (maxNumber - minNumber + 1) + minNumber);
 
-    // return minNumber + Math.floor(maxNumber * Math.random()); Какая здесь правильнее по терверу?
+    // return minNumber + Math.floor(maxNumber * Math.random()); Как здесь правильнее по теории вероятности?
 
   } else if (arguments.length === 1) {
     return Math.round(Math.random() * minNumber);
