@@ -32,7 +32,8 @@ const getRandomNumber = function (minNumber, maxNumber) {
 
     return Math.floor(Math.random() * (maxNumber - minNumber + 1) + minNumber);
 
-    // return minNumber + Math.floor(maxNumber * Math.random()); Как здесь правильнее по теории вероятности?
+    // return minNumber + Math.floor(maxNumber * Math.random());
+    // Как здесь правильнее по теории вероятности?
 
   } else if (arguments.length === 1) {
     return Math.round(Math.random() * minNumber);
@@ -42,7 +43,7 @@ const getRandomNumber = function (minNumber, maxNumber) {
 };
 
 const getRandomItem = (array) => {
-  const index = getRandomNumber(0, array.length);
+  const index = getRandomNumber(0, array.length - 1);
 
   return array[index];
 };
@@ -87,5 +88,5 @@ const generateTasks = (count) => {
     .map(generateTask);
 };
 
-export {generateTask, generateTasks};
+export {generateTasks};
 
