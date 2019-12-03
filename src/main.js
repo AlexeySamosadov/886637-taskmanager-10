@@ -8,7 +8,9 @@ import {getLoadButtonTemplate} from './components/load-button.js';
 import {generateFilters} from "./mock/filter";
 import {generateTasks} from "./mock/card";
 
-const TASK_TIMES = 3;
+const TASK_TIMES = 30;
+const TASK_VISIBLE = 7;
+const TASK_VISIBLE_BY_BUTTON = 8;
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
@@ -23,6 +25,24 @@ const siteBoardTaskElement = siteBoardElement.querySelector(`.board__tasks`);
 render(siteBoardTaskElement, getCardEditTemplate());
 
 const tasks = generateTasks(TASK_TIMES);
-tasks.forEach((task) => render(siteBoardTaskElement, getCardTemplate(task)));
+let totalTasksVisible = TASK_VISIBLE;
+tasks
+  .slice(1, totalTasksVisible)
+  .forEach((task) => render(siteBoardTaskElement, getCardTemplate(task)));
 
 render(siteBoardElement, getLoadButtonTemplate());
+
+const loadMoreButton = siteMainElement.querySelector(`.load-more`);
+
+loadMoreButton.addEventListener(`click`, () =>{
+  const prevTaskCount = totalTasksVisible;
+  totalTasksVisible = totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
+
+  tasks
+    .slice(prevTaskCount, totalTasksVisible)
+    .forEach((task) => render(siteBoardTaskElement, getCardTemplate(task)));
+
+  if (totalTasksVisible >= tasks.length) {
+    loadMoreButton.remove();
+  }
+});

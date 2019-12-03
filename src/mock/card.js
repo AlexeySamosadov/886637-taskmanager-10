@@ -28,13 +28,7 @@ const getRandomNumber = function (minNumber, maxNumber) {
   if (arguments.length > 2) {
     return 0;
   } else if (arguments.length === 2) {
-
-
     return Math.floor(Math.random() * (maxNumber - minNumber + 1) + minNumber);
-
-    // return minNumber + Math.floor(maxNumber * Math.random());
-    // Как здесь правильнее по теории вероятности?
-
   } else if (arguments.length === 1) {
     return Math.round(Math.random() * minNumber);
   } else {
