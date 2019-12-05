@@ -97,6 +97,7 @@ export const getCardEditTemplate = (task) => {
 
   const hashtags = createHashtags(tags);
   const repeatingDaysMarkup = createRepeatingDays(Days, repeatingDays);
+  const dateShowingMarkup = createDateShowingTemplate(isDateShowing, date, time);
   const colorsMarkup = createColorsMarkup(Colors, color);
 
   return (
@@ -125,9 +126,7 @@ export const getCardEditTemplate = (task) => {
                       <button class="card__date-deadline-toggle" type="button">
                         date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                       </button>
-
-                      ${createDateShowingTemplate(isDateShowing, date, time)}
-
+                        ${dateShowingMarkup}
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">${isRepeatingTask ? `yes` : `no`}</span>
                       </button>
