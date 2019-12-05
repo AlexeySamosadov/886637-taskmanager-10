@@ -2,7 +2,7 @@ import {formatTime} from "../util";
 import {MonthNames} from "../const";
 
 const createHashtags = (hashtags) => {
-  return hashtags
+  return Array.from(hashtags)
     .map((hashtag) => {
       return (
         `<span class="card__hashtag-inner">
@@ -23,7 +23,7 @@ export const getCardTemplate = (task) => {
   const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  const hashtags = createHashtags(Array.from(tags));
+  const hashtags = createHashtags(tags);
   const repeatClass = Object.values(repeatingDays).some(Boolean) ? `card--repeat` : ``;
   const deadlineClass = isExpired ? `card--deadline` : ``;
 

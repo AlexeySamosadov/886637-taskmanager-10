@@ -8,8 +8,9 @@ import {getLoadButtonTemplate} from './components/load-button.js';
 import {generateFilters} from "./mock/filter";
 import {generateTasks} from "./mock/card";
 
+
 const TASK_TIMES = 30;
-const TASK_VISIBLE = 7;
+const TASK_VISIBLE = 8;
 const TASK_VISIBLE_BY_BUTTON = 8;
 
 const siteMainElement = document.querySelector(`.main`);
@@ -22,9 +23,10 @@ render(siteMainElement, getBoardTemplate());
 const siteBoardElement = siteMainElement.querySelector(`.board`);
 const siteBoardTaskElement = siteBoardElement.querySelector(`.board__tasks`);
 
-render(siteBoardTaskElement, getCardEditTemplate());
-
 const tasks = generateTasks(TASK_TIMES);
+
+render(siteBoardTaskElement, getCardEditTemplate(tasks[0]));
+
 let totalTasksVisible = TASK_VISIBLE;
 tasks
   .slice(1, totalTasksVisible)
