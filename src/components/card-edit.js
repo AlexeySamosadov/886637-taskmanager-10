@@ -1,4 +1,4 @@
-import {Colors, Days, MonthNames} from '../const';
+import {COLORS, DAYS, MONTH_NAMES} from '../const';
 import {formatTime} from "../util";
 
 const createColorsMarkup = (colors, currentColor) => {
@@ -7,7 +7,7 @@ const createColorsMarkup = (colors, currentColor) => {
       return (
         `<input
           type="radio"
-          id="color-black-4"
+          id="color-${color}-4"
           class="card__color-input card__color-input--${color} visually-hidden"
           name="color"
           value=${color}
@@ -44,8 +44,8 @@ const createRepeatingDays = (days, repeatingDays) => {
 
 };
 
-const createDateShowingTemplate = (bool, date, time) => {
-  return bool ?
+const createDateShowingTemplate = (isDateShowing, date, time) => {
+  return isDateShowing ?
     `<fieldset class="card__date-deadline">
        <label class="card__input-deadline-wrap">
        <input
@@ -60,7 +60,7 @@ const createDateShowingTemplate = (bool, date, time) => {
 };
 
 const createHashtags = (hashtags) => {
-  return Array.from(hashtags)
+  return [...hashtags]
     .map((hashtag) => {
       return (`
          <span class="card__hashtag-inner">
@@ -88,7 +88,7 @@ export const getCardEditTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth]}` : ``;
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const isRepeatingTask = Object.values(repeatingDays).some(Boolean);
@@ -96,9 +96,9 @@ export const getCardEditTemplate = (task) => {
   const deadlineClass = isExpired ? `card--deadline` : ``;
 
   const hashtags = createHashtags(tags);
-  const repeatingDaysMarkup = createRepeatingDays(Days, repeatingDays);
+  const repeatingDaysMarkup = createRepeatingDays(DAYS, repeatingDays);
   const dateShowingMarkup = createDateShowingTemplate(isDateShowing, date, time);
-  const colorsMarkup = createColorsMarkup(Colors, color);
+  const colorsMarkup = createColorsMarkup(COLORS, color);
 
   return (
     `    <article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">

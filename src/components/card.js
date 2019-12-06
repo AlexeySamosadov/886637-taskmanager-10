@@ -1,5 +1,5 @@
 import {formatTime} from "../util";
-import {MonthNames} from "../const";
+import {MONTH_NAMES} from "../const";
 
 const createHashtags = (hashtags) => {
   return Array.from(hashtags)
@@ -20,7 +20,7 @@ export const getCardTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth]}` : ``;
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const hashtags = createHashtags(tags);
