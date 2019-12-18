@@ -1,4 +1,4 @@
-import {render} from './util.js';
+import {render, RenderPosition} from './util.js';
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
 import BoardComponent from './components/board.js';
@@ -28,18 +28,32 @@ const siteBoardTaskElement = siteBoardElement.querySelector(`.board__tasks`);
 
 const tasks = generateTasks(TASK_TIMES);
 
-const cardEditElement = new CardEditComponent(tasks[0]).getElement();
-render(siteBoardTaskElement, cardEditElement);
+const renderTask = (task) => {
+  const cardEditComponent = new CardEditComponent(task).getElement();
+  const cardComponent = new CardComponent(task).getElement();
+
+  const editButton = cardComponent.querySelector(`.card__btn--edit`);
+  editButton.addEventListener(`click`, () => {
+    siteBoardTaskElement.replaceChild(cardEditComponent, cardComponent);
+
+  });
+
+  const editForm = cardEditComponent.querySelector(`form`);
+  editForm.addEventListener(`submit`, () => {
+    siteBoardTaskElement.replaceChild(cardComponent, cardEditComponent);
+  });
+
+  render(siteBoardTaskElement, cardComponent);
+};
 
 let totalTasksVisible = TASK_VISIBLE;
 tasks
-  .slice(1, totalTasksVisible)
+  .slice(0, totalTasksVisible)
   .forEach((task) => {
-    render(siteBoardTaskElement, new CardComponent(task).getElement());
+    renderTask(task);
   });
 
 const loadButtonComponent = new LoadButtonComponent().getElement();
-console.log(loadButtonComponent);
 
 render(siteBoardElement, loadButtonComponent);
 
@@ -51,7 +65,7 @@ loadMoreButton.addEventListener(`click`, () =>{
 
   tasks
     .slice(prevTaskCount, totalTasksVisible)
-    .forEach((task) => render(siteBoardTaskElement, new CardComponent(task).getElement()));
+    .forEach((task) => renderTask(task));
 
   if (totalTasksVisible >= tasks.length) {
     loadMoreButton.remove();
