@@ -1,13 +1,12 @@
-import {render} from './util.js';
-import {getMenuTemplate} from './components/menu.js';
-import {getMainFilterTemplate} from './components/filter.js';
-import {getBoardTemplate} from './components/board.js';
-import {getCardEditTemplate} from './components/card-edit.js';
-import {getCardTemplate} from './components/card.js';
-import {getLoadButtonTemplate} from './components/load-button.js';
+import {render, RenderPosition} from './util.js';
+import MenuComponent from './components/menu.js';
+import FilterComponent from './components/filter.js';
+import BoardComponent from './components/board.js';
+import CardEditComponent from './components/card-edit.js';
+import CardComponent from './components/card.js';
+import LoadButtonComponent from './components/load-button.js';
 import {generateFilters} from "./mock/filter";
 import {generateTasks} from "./mock/card";
-
 
 const TASK_TIMES = 30;
 const TASK_VISIBLE = 8;
@@ -16,23 +15,47 @@ const TASK_VISIBLE_BY_BUTTON = 8;
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
-render(siteHeaderElement, getMenuTemplate());
-render(siteMainElement, getMainFilterTemplate(generateFilters()));
-render(siteMainElement, getBoardTemplate());
+render(siteHeaderElement, new MenuComponent().getElement());
+const filters = generateFilters();
+render(siteMainElement, new FilterComponent(filters).getElement());
 
-const siteBoardElement = siteMainElement.querySelector(`.board`);
+const boardComponent = new BoardComponent();
+const siteBoardElement = boardComponent.getElement();
+
+render(siteMainElement, siteBoardElement);
+
 const siteBoardTaskElement = siteBoardElement.querySelector(`.board__tasks`);
 
 const tasks = generateTasks(TASK_TIMES);
 
-render(siteBoardTaskElement, getCardEditTemplate(tasks[0]));
+const renderTask = (task) => {
+  const cardEditComponent = new CardEditComponent(task).getElement();
+  const cardComponent = new CardComponent(task).getElement();
+
+  const editButton = cardComponent.querySelector(`.card__btn--edit`);
+  editButton.addEventListener(`click`, () => {
+    siteBoardTaskElement.replaceChild(cardEditComponent, cardComponent);
+
+  });
+
+  const editForm = cardEditComponent.querySelector(`form`);
+  editForm.addEventListener(`submit`, () => {
+    siteBoardTaskElement.replaceChild(cardComponent, cardEditComponent);
+  });
+
+  render(siteBoardTaskElement, cardComponent);
+};
 
 let totalTasksVisible = TASK_VISIBLE;
 tasks
-  .slice(1, totalTasksVisible)
-  .forEach((task) => render(siteBoardTaskElement, getCardTemplate(task)));
+  .slice(0, totalTasksVisible)
+  .forEach((task) => {
+    renderTask(task);
+  });
 
-render(siteBoardElement, getLoadButtonTemplate());
+const loadButtonComponent = new LoadButtonComponent().getElement();
+
+render(siteBoardElement, loadButtonComponent);
 
 const loadMoreButton = siteMainElement.querySelector(`.load-more`);
 
@@ -42,7 +65,7 @@ loadMoreButton.addEventListener(`click`, () =>{
 
   tasks
     .slice(prevTaskCount, totalTasksVisible)
-    .forEach((task) => render(siteBoardTaskElement, getCardTemplate(task)));
+    .forEach((task) => renderTask(task));
 
   if (totalTasksVisible >= tasks.length) {
     loadMoreButton.remove();

@@ -1,4 +1,4 @@
-import {formatTime} from "../util";
+import {formatTime, createElement} from "../util";
 import {MONTH_NAMES} from "../const";
 
 const createHashtags = (hashtags) => {
@@ -28,7 +28,7 @@ export const getCardTemplate = (task) => {
   const deadlineClass = isExpired ? `card--deadline` : ``;
 
   return (
-    `    <article class="card card--${color} ${repeatClass} ${deadlineClass}">
+    `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
             <div class="card__form">
               <div class="card__inner">
                 <div class="card__control">
@@ -79,3 +79,26 @@ export const getCardTemplate = (task) => {
           </article>`
   );
 };
+
+export default class Card {
+  constructor(task) {
+    this._element = null;
+    this._task = task;
+  }
+
+  getTemplate() {
+    return getCardTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

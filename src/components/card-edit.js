@@ -1,5 +1,5 @@
 import {COLORS, DAYS, MONTH_NAMES} from '../const';
-import {formatTime} from "../util";
+import {formatTime, createElement} from "../util";
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors
@@ -82,7 +82,7 @@ const createHashtags = (hashtags) => {
     .join(`\n`);
 };
 
-export const getCardEditTemplate = (task) => {
+const getCardEditTemplate = (task) => {
   const {description, tags, dueDate, color, repeatingDays} = task;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
@@ -101,7 +101,7 @@ export const getCardEditTemplate = (task) => {
   const colorsMarkup = createColorsMarkup(COLORS, color);
 
   return (
-    `    <article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
+    `<article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__color-bar">
@@ -130,19 +130,19 @@ export const getCardEditTemplate = (task) => {
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">${isRepeatingTask ? `yes` : `no`}</span>
                       </button>
-                      
+
                       ${isRepeatingTask ?
       `<fieldset class="card__repeat-days">
                         <div class="card__repeat-days-inner">
                           ${repeatingDaysMarkup}
                         </div>
                       </fieldset>` : ``}
-                      
+
                     </div>
 
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
-                         ${hashtags}       
+                         ${hashtags}
                       </div>
 
                       <label>
@@ -173,3 +173,25 @@ export const getCardEditTemplate = (task) => {
           </article>`
   );
 };
+
+export default class CardEdit {
+  constructor(task) {
+    this._task = task;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getCardEditTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
