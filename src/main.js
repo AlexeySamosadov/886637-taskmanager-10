@@ -1,10 +1,13 @@
-import {render, RenderPosition} from './util.js';
+import {render} from './util.js';
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
 import BoardComponent from './components/board.js';
 import CardEditComponent from './components/card-edit.js';
 import CardComponent from './components/card.js';
 import LoadButtonComponent from './components/load-button.js';
+import BoardTasksComponent from './components/board-tasks.js';
+import SortComponent from './components/sort.js';
+import NoTasksComponent from './components/board-o-task.js';
 import {generateFilters} from "./mock/filter";
 import {generateTasks} from "./mock/card";
 
@@ -24,7 +27,13 @@ const siteBoardElement = boardComponent.getElement();
 
 render(siteMainElement, siteBoardElement);
 
-const siteBoardTaskElement = siteBoardElement.querySelector(`.board__tasks`);
+const sortElement = new SortComponent().getElement();
+render(siteBoardElement, sortElement);
+
+const boardTasksComponent = new BoardTasksComponent();
+
+const siteBoardTaskElement = boardTasksComponent.getElement();
+render(siteBoardElement, siteBoardTaskElement);
 
 const tasks = generateTasks(TASK_TIMES);
 
@@ -32,16 +41,29 @@ const renderTask = (task) => {
   const cardEditComponent = new CardEditComponent(task).getElement();
   const cardComponent = new CardComponent(task).getElement();
 
+  const replaceCardEditToCard = () => {
+    siteBoardTaskElement.replaceChild(cardComponent, cardEditComponent);
+  };
+  const replaceCardToCardEdit = () => {
+    siteBoardTaskElement.replaceChild(cardEditComponent, cardComponent);
+  };
+
+  const onEscPress = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+    if (isEscKey) {
+      replaceCardEditToCard();
+      document.removeEventListener(`keydown`, onEscPress);
+    }
+  };
+
   const editButton = cardComponent.querySelector(`.card__btn--edit`);
   editButton.addEventListener(`click`, () => {
-    siteBoardTaskElement.replaceChild(cardEditComponent, cardComponent);
-
+    replaceCardToCardEdit();
+    document.addEventListener(`keydown`, onEscPress);
   });
 
   const editForm = cardEditComponent.querySelector(`form`);
-  editForm.addEventListener(`submit`, () => {
-    siteBoardTaskElement.replaceChild(cardComponent, cardEditComponent);
-  });
+  editForm.addEventListener(`submit`, replaceCardEditToCard);
 
   render(siteBoardTaskElement, cardComponent);
 };
