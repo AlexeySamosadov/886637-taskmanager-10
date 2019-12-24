@@ -1,6 +1,6 @@
-import {createElement} from "../util/render";
 import {formatTime} from "../util/time";
 import {MONTH_NAMES} from "../const";
+import AbstractComponent from "./abstract-component";
 
 const createHashtags = (hashtags) => {
   return Array.from(hashtags)
@@ -81,25 +81,13 @@ export const getCardTemplate = (task) => {
   );
 };
 
-export default class Card {
+export default class Card extends AbstractComponent {
   constructor(task) {
-    this._element = null;
+    super();
     this._task = task;
   }
 
   getTemplate() {
     return getCardTemplate(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

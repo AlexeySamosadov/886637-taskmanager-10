@@ -1,28 +1,16 @@
 import {createElement} from "../util/render";
+import AbstractComponent from "./abstract-component";
 
 const getLoadButtonTemplate = () => {
   return (`<button class="load-more" type="button">load more</button>`);
 };
 
-export default class LoadButton {
+export default class LoadButton extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
     return getLoadButtonTemplate();
-  }
-
-  getElement() {
-
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

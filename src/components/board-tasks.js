@@ -1,27 +1,16 @@
-import {createElement} from "../util/render";
+import AbstractComponent from "./abstract-component";
 
 const getBoardTasksTemplate = () => {
   return (
     `<div class="board__tasks"></div>`);
 };
 
-export default class BoardTasks {
+export default class BoardTasks extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
     return getBoardTasksTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
