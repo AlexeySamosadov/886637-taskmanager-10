@@ -1,4 +1,3 @@
-import {createElement} from "../util/render";
 import AbstractComponent from "./abstract-component";
 
 const getMenuTemplate = () => {

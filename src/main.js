@@ -18,38 +18,40 @@ const TASK_VISIBLE_BY_BUTTON = 8;
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
-render(siteHeaderElement, new MenuComponent().getElement());
+render(siteHeaderElement, new MenuComponent());
 const filters = generateFilters();
-render(siteMainElement, new FilterComponent(filters).getElement());
+render(siteMainElement, new FilterComponent(filters));
 
 const boardComponent = new BoardComponent();
 const siteBoardElement = boardComponent.getElement();
 
-render(siteMainElement, siteBoardElement);
+render(siteMainElement, boardComponent);
 
 const tasks = generateTasks(TASK_TIMES);
 const isAllCardsArchived = tasks.every((task) => task.isArchive);
 
 if (isAllCardsArchived || TASK_TIMES < 1) {
-  render(siteBoardElement, new NoTasksComponent().getElement());
+  render(siteBoardElement, new NoTasksComponent());
 } else {
   const boardTasksComponent = new BoardTasksComponent();
   const siteBoardTaskElement = boardTasksComponent.getElement();
 
-  render(siteBoardElement, siteBoardTaskElement);
+  render(siteBoardElement, boardTasksComponent);
 
-  const sortElement = new SortComponent().getElement();
-  render(siteBoardElement, sortElement);
+  const sortComponent = new SortComponent();
+  render(siteBoardElement, sortComponent);
 
   const renderTask = (BoardTaskElement, task) => {
-    const cardEditComponent = new CardEditComponent(task).getElement();
-    const cardComponent = new CardComponent(task).getElement();
+    const cardEditComponent = new CardEditComponent(task);
+    const cardEditElement = cardEditComponent.getElement();
+    const cardComponent = new CardComponent(task);
+    const cardElement = cardComponent.getElement();
 
     const replaceCardEditToCard = () => {
-      BoardTaskElement.replaceChild(cardComponent, cardEditComponent);
+      BoardTaskElement.replaceChild(cardElement, cardEditElement);
     };
     const replaceCardToCardEdit = () => {
-      BoardTaskElement.replaceChild(cardEditComponent, cardComponent);
+      BoardTaskElement.replaceChild(cardEditElement, cardElement);
     };
 
     const onEscPress = (evt) => {
@@ -59,15 +61,13 @@ if (isAllCardsArchived || TASK_TIMES < 1) {
         document.removeEventListener(`keydown`, onEscPress);
       }
     };
-
-    const editButton = cardComponent.querySelector(`.card__btn--edit`);
-    editButton.addEventListener(`click`, () => {
-      replaceCardToCardEdit();
+    const addEscListener = () => {
       document.addEventListener(`keydown`, onEscPress);
-    });
+    };
+    cardComponent.setEditButtonClickListener(replaceCardToCardEdit);
+    cardComponent.setEditButtonClickListener(addEscListener);
 
-    const editForm = cardEditComponent.querySelector(`form`);
-    editForm.addEventListener(`submit`, replaceCardEditToCard);
+    cardEditComponent.setEditFormButtonClickListener(replaceCardEditToCard);
 
     render(BoardTaskElement, cardComponent);
   };
@@ -79,13 +79,10 @@ if (isAllCardsArchived || TASK_TIMES < 1) {
       renderTask(siteBoardTaskElement, task);
     });
 
-  const loadButtonComponent = new LoadButtonComponent().getElement();
-
+  const loadButtonComponent = new LoadButtonComponent();
   render(siteBoardElement, loadButtonComponent);
 
-  const loadMoreButton = siteMainElement.querySelector(`.load-more`);
-
-  loadMoreButton.addEventListener(`click`, () =>{
+  const OnLoadMoreCards = () => {
     const prevTaskCount = totalTasksVisible;
     totalTasksVisible = totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
 
@@ -94,9 +91,11 @@ if (isAllCardsArchived || TASK_TIMES < 1) {
       .forEach((task) => renderTask(siteBoardTaskElement, task));
 
     if (totalTasksVisible >= tasks.length) {
-      loadMoreButton.remove();
+      loadButtonComponent.getElement().remove();
     }
-  });
+  };
+
+  loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
 }
 
 

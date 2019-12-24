@@ -1,4 +1,3 @@
-import {createElement} from "../util/render";
 import AbstractComponent from "./abstract-component";
 
 const getLoadButtonTemplate = () => {
@@ -12,5 +11,9 @@ export default class LoadButton extends AbstractComponent {
 
   getTemplate() {
     return getLoadButtonTemplate();
+  }
+
+  setLoadMoreButtonClickListener(renderMore) {
+    this._element.addEventListener(`click`, renderMore);
   }
 }

@@ -90,4 +90,8 @@ export default class Card extends AbstractComponent {
   getTemplate() {
     return getCardTemplate(this._task);
   }
+
+  setEditButtonClickListener(replaceCard) {
+    this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, replaceCard);
+  }
 }

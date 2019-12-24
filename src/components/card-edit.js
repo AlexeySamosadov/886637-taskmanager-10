@@ -184,4 +184,8 @@ export default class CardEdit extends AbstractComponent {
   getTemplate() {
     return getCardEditTemplate(this._task);
   }
+
+  setEditFormButtonClickListener(replaceCard) {
+    this._element.addEventListener(`submit`, replaceCard);
+  }
 }
