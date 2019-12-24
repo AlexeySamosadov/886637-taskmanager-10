@@ -1,4 +1,5 @@
-import {formatTime, createElement} from "../util";
+import {createElement} from "../util/render";
+import {formatTime} from "../util/time";
 import {MONTH_NAMES} from "../const";
 
 const createHashtags = (hashtags) => {

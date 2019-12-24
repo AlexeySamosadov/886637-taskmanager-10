@@ -1,4 +1,4 @@
-import {createElement} from "../util";
+import {createElement} from "../util/render";
 
 const getLoadButtonTemplate = () => {
   return (`<button class="load-more" type="button">load more</button>`);
