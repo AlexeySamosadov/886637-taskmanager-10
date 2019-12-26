@@ -1,4 +1,4 @@
-import {render} from './util/render';
+import {render, remove, replaceComponentElement} from './util/render';
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
 import BoardComponent from './components/board.js';
@@ -33,12 +33,14 @@ const renderTask = (BoardTaskElement, task) => {
   const cardEditElement = cardEditComponent.getElement();
   const cardComponent = new CardComponent(task);
   const cardElement = cardComponent.getElement();
-
   const replaceCardEditToCard = () => {
-    BoardTaskElement.replaceChild(cardElement, cardEditElement);
+    replaceComponentElement(cardComponent, cardEditComponent);
+
+    // BoardTaskElement.replaceChild(cardElement, cardEditElement);
   };
   const replaceCardToCardEdit = () => {
-    BoardTaskElement.replaceChild(cardEditElement, cardElement);
+    replaceComponentElement(cardEditComponent, cardComponent);
+    // BoardTaskElement.replaceChild(cardEditElement, cardElement);
   };
 
   const onEscPress = (evt) => {
@@ -58,7 +60,6 @@ const renderTask = (BoardTaskElement, task) => {
 
   render(BoardTaskElement, cardComponent);
 };
-
 
 
 const renderBoard = (component, renderingTasks) => {
@@ -94,7 +95,7 @@ const renderBoard = (component, renderingTasks) => {
         .forEach((task) => renderTask(siteBoardTaskElement, task));
 
       if (totalTasksVisible >= renderingTasks.length) {
-        loadButtonComponent.getElement().remove();
+        remove(loadButtonComponent);
       }
     };
 
