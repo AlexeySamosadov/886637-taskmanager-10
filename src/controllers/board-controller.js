@@ -40,6 +40,10 @@ const renderTask = (BoardTaskElement, task) => {
   render(BoardTaskElement, cardComponent);
 };
 
+const renderTasks = (taskListElement, tasks) => {
+  tasks.forEach((task) => renderTask(taskListElement, task));
+};
+
 
 export default class BoardController extends AbstractComponent {
   constructor(container) {
@@ -68,11 +72,8 @@ export default class BoardController extends AbstractComponent {
 
 
       let totalTasksVisible = TASK_VISIBLE;
-      renderingTasks
-        .slice(0, totalTasksVisible)
-        .forEach((task) => {
-          renderTask(siteBoardTaskElement, task);
-        });
+
+      renderTasks(siteBoardTaskElement, renderingTasks.slice(0, totalTasksVisible));
 
       const loadButtonComponent = this._loadButtonComponent;
       render(container.getElement(), loadButtonComponent);
@@ -80,10 +81,7 @@ export default class BoardController extends AbstractComponent {
       const OnLoadMoreCards = () => {
         const prevTaskCount = totalTasksVisible;
         totalTasksVisible = totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
-
-        renderingTasks
-          .slice(prevTaskCount, totalTasksVisible)
-          .forEach((task) => renderTask(siteBoardTaskElement, task));
+        renderTasks(siteBoardTaskElement, renderingTasks.slice(prevTaskCount, totalTasksVisible));
 
         if (totalTasksVisible >= renderingTasks.length) {
           remove(loadButtonComponent);

@@ -1,11 +1,17 @@
 import AbstractComponent from "./abstract-component";
 
+export const SortType = {
+  DATE_DOWN: `date-down`,
+  DATE_UP: `date-up`,
+  DEFAULT: `default`,
+};
+
 const getSortTemplate = () => {
   return (
     `<div class="board__filter-list">
-          <a href="#" class="board__filter">SORT BY DEFAULT</a>
-          <a href="#" class="board__filter">SORT BY DATE up</a>
-          <a href="#" class="board__filter">SORT BY DATE down</a>
+          <a href="#" data-sort-type="${SortType.DEFAULT}" class="board__filter">SORT BY DEFAULT</a>
+          <a href="#" data-sort-type="${SortType.DATE_UP}" class="board__filter">SORT BY DATE up</a>
+          <a href="#" data-sort-type="${SortType.DATE_DOWN}" class="board__filter">SORT BY DATE down</a>
         </div>`
   );
 };
@@ -13,9 +19,31 @@ const getSortTemplate = () => {
 export default class Sort extends AbstractComponent {
   constructor() {
     super();
+
+    this._currentSortType = SortType.DEFAULT;
   }
 
   getTemplate() {
     return getSortTemplate();
+  }
+
+  setSOrtTypeChangeHandler(handler) {
+    this.getElement().addEventListener(`click`, (evt)=> {
+      evt.preventDefault();
+
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+      console.log(evt.target.dataset.sortType);
+      const sortType = evt.target.dataset.sortType;
+
+      if (this._currentSortType === sortType) {
+        return;
+      }
+
+      this.__currentSortType = sortType;
+
+      handler(this._currentSortType);
+    });
   }
 }

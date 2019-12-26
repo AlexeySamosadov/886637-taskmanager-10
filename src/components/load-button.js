@@ -1,4 +1,6 @@
 import AbstractComponent from "./abstract-component";
+import SortComponent, {SortType} from  './sort';
+
 
 const getLoadButtonTemplate = () => {
   return (`<button class="load-more" type="button">load more</button>`);
