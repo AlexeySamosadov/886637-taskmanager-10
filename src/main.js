@@ -30,17 +30,12 @@ const tasks = generateTasks(TASK_TIMES);
 
 const renderTask = (BoardTaskElement, task) => {
   const cardEditComponent = new CardEditComponent(task);
-  const cardEditElement = cardEditComponent.getElement();
   const cardComponent = new CardComponent(task);
-  const cardElement = cardComponent.getElement();
   const replaceCardEditToCard = () => {
     replaceComponentElement(cardComponent, cardEditComponent);
-
-    // BoardTaskElement.replaceChild(cardElement, cardEditElement);
   };
   const replaceCardToCardEdit = () => {
     replaceComponentElement(cardEditComponent, cardComponent);
-    // BoardTaskElement.replaceChild(cardEditElement, cardElement);
   };
 
   const onEscPress = (evt) => {
