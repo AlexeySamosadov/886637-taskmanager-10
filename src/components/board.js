@@ -9,10 +9,6 @@ const getBoardTemplate = () => {
 
 
 export default class Board extends AbstractComponent {
-  constructor() {
-    super();
-  }
-
   getTemplate() {
     return getBoardTemplate();
   }
