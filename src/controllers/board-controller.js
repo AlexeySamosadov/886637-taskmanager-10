@@ -1,4 +1,4 @@
-import AbstractComponent from "./abstract-component";
+import AbstractComponent from "../components/abstract-component.js";
 import CardEditComponent from "../components/card-edit";
 import CardComponent from "../components/card";
 import {remove, render, replaceComponentElement} from "../util/render";
