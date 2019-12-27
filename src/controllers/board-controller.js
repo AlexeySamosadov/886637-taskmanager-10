@@ -4,8 +4,9 @@ import CardComponent from "../components/card";
 import {remove, render, replaceComponentElement} from "../util/render";
 import NoTasksComponent from "../components/board-no-task";
 import BoardTasksComponent from "../components/board-tasks";
-import SortComponent from "../components/sort";
+import SortComponent, {SortType} from "../components/sort";
 import LoadButtonComponent from "../components/load-button";
+
 
 const TASK_VISIBLE = 8;
 const TASK_VISIBLE_BY_BUTTON = 8;
@@ -88,6 +89,20 @@ export default class BoardController extends AbstractComponent {
         }
       };
       loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
+
+      sortComponent.setSOrtTypeChangeHandler((sortType)=> {
+        let sortedTasks = [];
+
+        switch (sortType) {
+          case SortType.DATE_UP:
+            sortedTasks = renderingTasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+            break;
+          case SortType.DATE_DOWN:
+            sortedTasks = renderingTasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+            break;
+          case SortType.DEFAULT:
+            sortedTasks = renderingTasks.slice(0, totalTasksVisible);
+            break;);
     }
   }
 }
