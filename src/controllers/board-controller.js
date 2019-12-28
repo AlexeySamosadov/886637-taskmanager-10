@@ -74,10 +74,9 @@ export default class BoardController extends AbstractComponent {
 
     let totalTasksVisible = TASK_VISIBLE;
 
-    renderTasks(siteBoardTaskElement, renderingTasks.slice(0, totalTasksVisible));
+    let sortedTasks = renderingTasks;
+    renderTasks(siteBoardTaskElement, sortedTasks.slice(0, totalTasksVisible));
 
-
-    let sortedTasks = [];
     sortComponent.setSortTypeChangeHandler((sortType)=> {
       switch (sortType) {
         case SortType.DATE_UP:
@@ -89,22 +88,25 @@ export default class BoardController extends AbstractComponent {
         case SortType.DEFAULT:sortedTasks = renderingTasks.slice(0, totalTasksVisible);
           break;
       }
+      siteBoardTaskElement.innerHTML = ``;
+      renderTasks(siteBoardTaskElement, sortedTasks.slice(0, totalTasksVisible));
     });
 
     const loadButtonComponent = this._loadButtonComponent;
     render(container.getElement(), loadButtonComponent);
 
-    const OnLoadMoreCards = () => {
-      const prevTaskCount = totalTasksVisible;
-      totalTasksVisible = totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
-      renderTasks(siteBoardTaskElement, renderingTasks.slice(prevTaskCount, totalTasksVisible));
+    const setLoadMoreButtonListener = () => {
+      const OnLoadMoreCards = () => {
+        const prevTaskCount = totalTasksVisible;
+        totalTasksVisible = totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
+        renderTasks(siteBoardTaskElement, sortedTasks.slice(prevTaskCount, totalTasksVisible));
 
-      if (totalTasksVisible >= renderingTasks.length) {
-        remove(loadButtonComponent);
-      }
+        if (totalTasksVisible >= sortedTasks.length) {
+          remove(loadButtonComponent);
+        }
+      };
+      loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
     };
-    loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
-
-    render(siteBoardTaskElement, sortedTasks);
+    setLoadMoreButtonListener();
   }
 }
