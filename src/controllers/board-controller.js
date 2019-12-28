@@ -63,14 +63,12 @@ export default class BoardController extends AbstractComponent {
       render(container.getElement(), this._noTaskComponent);
       return;
     }
-    const boardTasksComponent = this._boardTasksComponent;
-    const siteBoardTaskElement = boardTasksComponent.getElement();
-
-    render(container.getElement(), boardTasksComponent);
-
     const sortComponent = this._sortComponent;
     render(container.getElement(), sortComponent);
 
+    const boardTasksComponent = this._boardTasksComponent;
+    const siteBoardTaskElement = boardTasksComponent.getElement();
+    render(container.getElement(), boardTasksComponent);
 
     let totalTasksVisible = TASK_VISIBLE;
 
