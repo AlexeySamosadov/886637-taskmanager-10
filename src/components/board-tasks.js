@@ -6,10 +6,6 @@ const getBoardTasksTemplate = () => {
 };
 
 export default class BoardTasks extends AbstractComponent {
-  constructor() {
-    super();
-  }
-
   getTemplate() {
     return getBoardTasksTemplate();
   }

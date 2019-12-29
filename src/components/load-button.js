@@ -5,10 +5,6 @@ const getLoadButtonTemplate = () => {
 };
 
 export default class LoadButton extends AbstractComponent {
-  constructor() {
-    super();
-  }
-
   getTemplate() {
     return getLoadButtonTemplate();
   }
