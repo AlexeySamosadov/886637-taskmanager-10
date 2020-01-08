@@ -18,7 +18,7 @@ const createHashtags = (hashtags) => {
 };
 
 export const getCardTemplate = (task) => {
-  const {description, tags, dueDate, color, repeatingDays, isArchive} = task;
+  const {description, tags, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
@@ -55,8 +55,11 @@ export const getCardTemplate = (task) => {
                 </div>
 
                 <div class="card__textarea-wrap">
-                  <p class="card__text">${description}</p>
-                  <p>${isArchive ? `Архивная` : `Не архивная`}</p>
+                  <p class="card__text">
+                    ${description} </br></br>
+                    ${isArchive ? `<img src="http://sibirinfo.ru/inform/ava/images.jpg" width="30" height="30">` : ` `}
+                    ${isFavorite ? `<img src="https://pp.userapi.com/p-SfbP4fqXN_zwIhMcmZsnEwrLaTK3ew1FqXkQ/1JYvOOD8YvE.jpg?ava=1" width="30" height="30">` : ` `}
+                  </p>
                 </div>
 
                 <div class="card__settings">
