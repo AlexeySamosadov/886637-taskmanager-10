@@ -1,6 +1,8 @@
 import {COLORS, DAYS, MONTH_NAMES} from '../const';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 import {formatTime} from "../util/time";
-import AbstractComponent from "./abstract-component";
 import AbstractSmartComponent from "./abstract-smart-component";
 
 const createColorsMarkup = (colors, currentColor) => {
@@ -84,11 +86,17 @@ const createHashtags = (hashtags) => {
     .join(`\n`);
 };
 
+const isRepeating = (repeatingDays) => {
+  return Object.values(repeatingDays).some(Boolean);
+};
+
 const getCardEditTemplate = (task, options = {}) => {
   const {description, tags, dueDate, color} = task;
   const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isBlockSaveButton = (isDateShowing && isRepeatingTask) ||
+    (isRepeatingTask && !isRepeating(isRepeatingTask));
 
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
@@ -166,7 +174,7 @@ const getCardEditTemplate = (task, options = {}) => {
                 </div>
 
                 <div class="card__status-btns">
-                  <button class="card__save" type="submit">save</button>
+                  <button class="card__save" type="submit" ${isBlockSaveButton ? `disabled` : ``}>save</button>
                   <button class="card__delete" type="button">delete</button>
                 </div>
               </div>
@@ -182,6 +190,10 @@ export default class CardEdit extends AbstractSmartComponent {
     this.isDateShowing = !!task.dueDate;
     this.isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
     this.activeRepeatingDays = Object.assign({}, task.repeatingDays);
+    this._flatpickr = null;
+
+    this._applyFlatpickr();
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -192,7 +204,61 @@ export default class CardEdit extends AbstractSmartComponent {
     });
   }
 
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  reset() {
+    const task = this._task;
+
+    this.isDateShowing = !!task.dueDate;
+    this.isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
+    this.activeRepeatingDays = Object.assign({}, task.repeatingDays);
+
+    this.rerender();
+  }
+
   setEditFormButtonClickListener(handler) {
     this._element.addEventListener(`submit`, handler);
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+    element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, ()=>{
+      this.isDateShowing = !this.isDateShowing;
+      this.rerender();
+    });
+
+    element.querySelector(`.card__repeat-toggle`).addEventListener(`click`, ()=>{
+      this.isRepeatingTask = !this.isRepeatingTask;
+
+      this.rerender();
+    });
+
+    const repeatDays = element.querySelector(`.card__repeat-days`);
+    if (repeatDays) {
+      repeatDays.addEventListener(`change`, (evt) => {
+        this.activeRepeatingDays[evt.target.value] = evt.target.checked;
+        this.rerender();
+      });
+    }
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
+      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    if (this.isDateShowing) {
+      const dateElement = this.getElement().querySelector(`.card__date`);
+      this._flatpickr = flatpickr(dateElement, {
+        altInput: true,
+        allowInput: true,
+        defaultDate: this._task.dueDate,
+      });
+    }
   }
 }
