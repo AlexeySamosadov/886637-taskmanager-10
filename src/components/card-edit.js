@@ -1,6 +1,7 @@
 import {COLORS, DAYS, MONTH_NAMES} from '../const';
 import {formatTime} from "../util/time";
 import AbstractComponent from "./abstract-component";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors
@@ -83,21 +84,20 @@ const createHashtags = (hashtags) => {
     .join(`\n`);
 };
 
-const getCardEditTemplate = (task) => {
-  const {description, tags, dueDate, color, repeatingDays} = task;
+const getCardEditTemplate = (task, options = {}) => {
+  const {description, tags, dueDate, color} = task;
+  const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
-  const isDateShowing = !!dueDate;
 
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  const isRepeatingTask = Object.values(repeatingDays).some(Boolean);
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;
   const deadlineClass = isExpired ? `card--deadline` : ``;
 
   const hashtags = createHashtags(tags);
-  const repeatingDaysMarkup = createRepeatingDays(DAYS, repeatingDays);
+  const repeatingDaysMarkup = createRepeatingDays(DAYS, activeRepeatingDays);
   const dateShowingMarkup = createDateShowingTemplate(isDateShowing, date, time);
   const colorsMarkup = createColorsMarkup(COLORS, color);
 
@@ -175,14 +175,21 @@ const getCardEditTemplate = (task) => {
   );
 };
 
-export default class CardEdit extends AbstractComponent {
+export default class CardEdit extends AbstractSmartComponent {
   constructor(task) {
     super();
     this._task = task;
+    this.isDateShowing = !!task.dueDate;
+    this.isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
+    this.activeRepeatingDays = Object.assign({}, task.repeatingDays);
   }
 
   getTemplate() {
-    return getCardEditTemplate(this._task);
+    return getCardEditTemplate(this._task, {
+      isDateShowing: this.isDateShowing,
+      isRepeatingTask: this.isRepeatingTask,
+      activeRepeatingDays: this.activeRepeatingDays,
+    });
   }
 
   setEditFormButtonClickListener(handler) {

@@ -9,4 +9,8 @@ export default class BoardTasks extends AbstractComponent {
   getTemplate() {
     return getBoardTasksTemplate();
   }
+
+  setEscListener(handler) {
+    document.addEventListener(`keydown`, handler);
+  }
 }

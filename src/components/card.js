@@ -1,6 +1,7 @@
 import {formatTime} from "../util/time";
 import {MONTH_NAMES} from "../const";
 import AbstractComponent from "./abstract-component";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const createHashtags = (hashtags) => {
   return Array.from(hashtags)
@@ -17,7 +18,7 @@ const createHashtags = (hashtags) => {
 };
 
 export const getCardTemplate = (task) => {
-  const {description, tags, dueDate, color, repeatingDays} = task;
+  const {description, tags, dueDate, color, repeatingDays, isArchive} = task;
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
@@ -55,6 +56,7 @@ export const getCardTemplate = (task) => {
 
                 <div class="card__textarea-wrap">
                   <p class="card__text">${description}</p>
+                  <p>${isArchive ? `Архивная` : `Не архивная`}</p>
                 </div>
 
                 <div class="card__settings">
@@ -81,7 +83,7 @@ export const getCardTemplate = (task) => {
   );
 };
 
-export default class Card extends AbstractComponent {
+export default class Card extends AbstractSmartComponent {
   constructor(task) {
     super();
     this._task = task;
@@ -91,7 +93,17 @@ export default class Card extends AbstractComponent {
     return getCardTemplate(this._task);
   }
 
+
+
   setEditButtonClickListener(handler) {
     this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, handler);
+  }
+
+  setArchiveButtonClickListener(handler) {
+    this._element.querySelector(`.card__btn--archive`).addEventListener(`click`, handler);
+  }
+
+  setFavoritesButtonClickListener(handler) {
+    this._element.querySelector(`.card__btn--favorites`).addEventListener(`click`, handler);
   }
 }
