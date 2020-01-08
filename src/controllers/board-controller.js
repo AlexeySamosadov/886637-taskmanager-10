@@ -1,47 +1,19 @@
 import AbstractComponent from "../components/abstract-component.js";
-import CardEditComponent from "../components/card-edit";
-import CardComponent from "../components/card";
-import {remove, render, replaceComponentElement} from "../util/render";
+import {remove, render} from "../util/render";
 import NoTasksComponent from "../components/board-no-task";
 import BoardTasksComponent from "../components/board-tasks";
 import SortComponent, {SortType} from "../components/sort";
 import LoadButtonComponent from "../components/load-button";
+import TaskController from "./task-controller";
 
 const TASK_VISIBLE = 8;
-const TASK_VISIBLE_BY_BUTTON = 8;
+const TASK_VISIBLE_BY_BUTTON = 4;
 
-const renderTask = (BoardTaskElement, task) => {
-  const cardEditComponent = new CardEditComponent(task);
-  const cardComponent = new CardComponent(task);
-  const replaceCardEditToCard = () => {
-    replaceComponentElement(cardComponent, cardEditComponent);
-  };
-  const replaceCardToCardEdit = () => {
-    replaceComponentElement(cardEditComponent, cardComponent);
-  };
-
-  const onEscPress = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      replaceCardEditToCard();
-      document.removeEventListener(`keydown`, onEscPress);
-    }
-  };
-  const addEscListener = () => {
-    document.addEventListener(`keydown`, onEscPress);
-  };
-  cardComponent.getElement();
-  cardComponent.setEditButtonClickListener(replaceCardToCardEdit);
-  cardComponent.setEditButtonClickListener(addEscListener);
-
-  cardEditComponent.getElement();
-  cardEditComponent.setEditFormButtonClickListener(replaceCardEditToCard);
-
-  render(BoardTaskElement, cardComponent);
-};
-
-const renderTasks = (taskListElement, tasks) => {
-  tasks.forEach((task) => renderTask(taskListElement, task));
+const renderTasks = (taskListElement, tasks, onDataChange) => {
+  tasks.forEach((task) => {
+    const taskController = new TaskController(taskListElement, onDataChange);
+    taskController.render(task);
+  });
 };
 
 
@@ -49,62 +21,78 @@ export default class BoardController extends AbstractComponent {
   constructor(container) {
     super();
     this._container = container;
+    this._renderingTasks = [];
+    this._sortedTasks = [];
+    this._totalTasksVisible = TASK_VISIBLE;
 
     this._noTaskComponent = new NoTasksComponent();
     this._boardTasksComponent = new BoardTasksComponent();
+    this._siteBoardTaskElement = this._boardTasksComponent.getElement();
     this._sortComponent = new SortComponent();
     this._loadButtonComponent = new LoadButtonComponent();
+    this._setLoadMoreButton = this._setLoadMoreButton.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   render(renderingTasks) {
-    const container = this._container;
+    this._renderingTasks = renderingTasks;
     const isAllCardsArchived = renderingTasks.every((task) => task.isArchive);
     if (isAllCardsArchived) {
-      render(container.getElement(), this._noTaskComponent);
+      render(this._container.getElement(), this._noTaskComponent);
       return;
     }
     const sortComponent = this._sortComponent;
-    render(container.getElement(), sortComponent);
+    render(this._container.getElement(), sortComponent);
 
-    const boardTasksComponent = this._boardTasksComponent;
-    const siteBoardTaskElement = boardTasksComponent.getElement();
-    render(container.getElement(), boardTasksComponent);
+    render(this._container.getElement(), this._boardTasksComponent);
+    renderTasks(this._siteBoardTaskElement, this._renderingTasks.slice(0, this._totalTasksVisible), this._onDataChange);
 
-    let totalTasksVisible = TASK_VISIBLE;
+    this._setLoadMoreButton();
+    sortComponent.setSortTypeChangeHandler(this._onSortTypeChange.bind(this));
+  }
 
-    let sortedTasks = renderingTasks;
-    renderTasks(siteBoardTaskElement, sortedTasks.slice(0, totalTasksVisible));
+  _onSortTypeChange(sortType) {
+    switch (sortType) {
+      case SortType.DATE_UP:
+        this._sortedTasks = this._renderingTasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+        break;
+      case SortType.DATE_DOWN:
+        this._sortedTasks = this._renderingTasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+        break;
+      case SortType.DEFAULT: this._sortedTasks = this._renderingTasks.slice();
+        break;
+    }
+    this._siteBoardTaskElement.innerHTML = ``;
+    renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(0, this._totalTasksVisible), this._onDataChange);
+  }
 
-    sortComponent.setSortTypeChangeHandler((sortType)=> {
-      switch (sortType) {
-        case SortType.DATE_UP:
-          sortedTasks = renderingTasks.slice().sort((a, b) => a.dueDate - b.dueDate);
-          break;
-        case SortType.DATE_DOWN:
-          sortedTasks = renderingTasks.slice().sort((a, b) => b.dueDate - a.dueDate);
-          break;
-        case SortType.DEFAULT:sortedTasks = renderingTasks.slice(0, totalTasksVisible);
-          break;
+  _setLoadMoreButton() {
+    if (this._totalTasksVisible > this._renderingTasks) {
+      return;
+    }
+    render(this._container.getElement(), this._loadButtonComponent);
+
+    const OnLoadMoreCards = () => {
+      this._sortedTasks = this._renderingTasks;
+      const prevTaskCount = this._totalTasksVisible;
+      this._totalTasksVisible = this._totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
+      renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(prevTaskCount, this._totalTasksVisible), this._onDataChange);
+
+      if (this._totalTasksVisible >= this._sortedTasks.length) {
+        remove(this._loadButtonComponent);
       }
-      siteBoardTaskElement.innerHTML = ``;
-      renderTasks(siteBoardTaskElement, sortedTasks.slice(0, totalTasksVisible));
-    });
-
-    const loadButtonComponent = this._loadButtonComponent;
-    render(container.getElement(), loadButtonComponent);
-
-    const setLoadMoreButtonListener = () => {
-      const OnLoadMoreCards = () => {
-        const prevTaskCount = totalTasksVisible;
-        totalTasksVisible = totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
-        renderTasks(siteBoardTaskElement, sortedTasks.slice(prevTaskCount, totalTasksVisible));
-
-        if (totalTasksVisible >= sortedTasks.length) {
-          remove(loadButtonComponent);
-        }
-      };
-      loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
     };
-    setLoadMoreButtonListener();
+    this._loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
+  }
+
+  _onDataChange(place, oldData, newData) {
+    const index = this._renderingTasks.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._renderingTasks = [].concat(this._renderingTasks.slice(0, index), newData, this._renderingTasks.slice(index + 1));
+    place.render(this._renderingTasks[index]);
   }
 }

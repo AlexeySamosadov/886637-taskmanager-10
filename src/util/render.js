@@ -31,11 +31,16 @@ const replaceComponentElement = (newComponent, oldComponent) => {
   const newElement = newComponent.getElement();
   const oldElement = oldComponent.getElement();
 
-  const isAllExists = !!(parentElement && newElement && oldElement);
-
-  if (isAllExists) {
+  if (parentElement) {
     parentElement.replaceChild(newElement, oldElement);
   }
 };
 
-export {RenderPosition, createElement, render, remove, replaceComponentElement};
+const replaceElement = (newElement, oldElement) => {
+  const parentElement = oldElement.parentElement;
+  if (parentElement) {
+    parentElement.replaceChild(newElement, oldElement);
+  }
+};
+
+export {RenderPosition, createElement, render, remove, replaceComponentElement, replaceElement};
