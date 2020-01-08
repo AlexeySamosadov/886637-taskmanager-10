@@ -17,6 +17,9 @@ export default class TaskController {
   }
 
   render(task) {
+    const oldCardComponent = this._cardComponent;
+    const oldCardEditComponent = this._cardEditComponent;
+
     this._cardComponent = new CardComponent(task);
     this._cardEditComponent = new CardEditComponent(task);
     const cardEditComponent = this._cardEditComponent;
@@ -41,8 +44,12 @@ export default class TaskController {
       }));
     });
 
-
-    render(this._boardTaskElement, cardComponent);
+    if (oldCardEditComponent && oldCardComponent) {
+      replaceComponentElement(cardComponent, oldCardComponent);
+      replaceComponentElement(cardEditComponent, oldCardEditComponent);
+    } else {
+      render(this._boardTaskElement, cardComponent);
+    }
   }
 
   _replaceCardToCardEdit() {
