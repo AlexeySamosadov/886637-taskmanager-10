@@ -9,10 +9,12 @@ import TaskController from "./task-controller";
 const TASK_VISIBLE = 8;
 const TASK_VISIBLE_BY_BUTTON = 4;
 
-const renderTasks = (taskListElement, tasks, onDataChange) => {
-  tasks.forEach((task) => {
-    const taskController = new TaskController(taskListElement, onDataChange);
+const renderTasks = (taskListElement, tasks, onDataChange, onViewChange) => {
+  return tasks.map((task) => {
+    const taskController = new TaskController(taskListElement, onDataChange, onViewChange);
     taskController.render(task);
+
+    return taskController;
   });
 };
 
@@ -27,11 +29,13 @@ export default class BoardController extends AbstractComponent {
 
     this._noTaskComponent = new NoTasksComponent();
     this._boardTasksComponent = new BoardTasksComponent();
+    this._showedTaskControllers = [];
     this._siteBoardTaskElement = this._boardTasksComponent.getElement();
     this._sortComponent = new SortComponent();
     this._loadButtonComponent = new LoadButtonComponent();
     this._setLoadMoreButton = this._setLoadMoreButton.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
   render(renderingTasks) {
@@ -45,8 +49,8 @@ export default class BoardController extends AbstractComponent {
     render(this._container.getElement(), sortComponent);
 
     render(this._container.getElement(), this._boardTasksComponent);
-    renderTasks(this._siteBoardTaskElement, this._renderingTasks.slice(0, this._totalTasksVisible), this._onDataChange);
-
+    const newTasks = renderTasks(this._siteBoardTaskElement, this._renderingTasks.slice(0, this._totalTasksVisible), this._onDataChange, this._onViewChange);
+    this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
     this._setLoadMoreButton();
     sortComponent.setSortTypeChangeHandler(this._onSortTypeChange.bind(this));
   }
@@ -63,7 +67,9 @@ export default class BoardController extends AbstractComponent {
         break;
     }
     this._siteBoardTaskElement.innerHTML = ``;
-    renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(0, this._totalTasksVisible), this._onDataChange);
+
+    const newTasks = renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(0, this._totalTasksVisible), this._onDataChange, this._onViewChange);
+    this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
   }
 
   _setLoadMoreButton() {
@@ -76,13 +82,17 @@ export default class BoardController extends AbstractComponent {
       this._sortedTasks = this._renderingTasks;
       const prevTaskCount = this._totalTasksVisible;
       this._totalTasksVisible = this._totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
-      renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(prevTaskCount, this._totalTasksVisible), this._onDataChange);
-
+      const newTasks = renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(prevTaskCount, this._totalTasksVisible), this._onDataChange, this._onViewChange);
+      this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
       if (this._totalTasksVisible >= this._sortedTasks.length) {
         remove(this._loadButtonComponent);
       }
     };
     this._loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
+  }
+
+  _onViewChange() {
+    this._showedTaskControllers.forEach((it) => it.setDefaultView());
   }
 
   _onDataChange(place, oldData, newData) {

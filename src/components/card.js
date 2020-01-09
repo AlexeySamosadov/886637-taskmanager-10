@@ -1,6 +1,5 @@
 import {formatTime} from "../util/time";
 import {MONTH_NAMES} from "../const";
-import AbstractComponent from "./abstract-component";
 import AbstractSmartComponent from "./abstract-smart-component";
 
 const createHashtags = (hashtags) => {
@@ -95,7 +94,6 @@ export default class Card extends AbstractSmartComponent {
   getTemplate() {
     return getCardTemplate(this._task);
   }
-
 
 
   setEditButtonClickListener(handler) {

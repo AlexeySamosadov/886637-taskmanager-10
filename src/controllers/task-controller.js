@@ -2,11 +2,17 @@ import CardEditComponent from "../components/card-edit";
 import CardComponent from "../components/card";
 import {render, replaceComponentElement} from "../util/render";
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class TaskController {
-  constructor(boardTaskElement, onDataChange) {
+  constructor(boardTaskElement, onDataChange, onViewChange) {
     this._boardTaskElement = boardTaskElement;
     this._onDataChange = onDataChange;
-
+    this._onViewChange = onViewChange;
+    this._mode = Mode.DEFAULT;
     this._cardComponent = null;
     this._cardEditComponent = null;
 
@@ -52,12 +58,24 @@ export default class TaskController {
     }
   }
 
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceCardEditToCard();
+    }
+  }
+
+
   _replaceCardToCardEdit() {
+    this._onViewChange();
+
     replaceComponentElement(this._cardEditComponent, this._cardComponent);
+    this._mode = Mode.EDIT;
   }
 
   _replaceCardEditToCard() {
+    this._cardEditComponent.reset();
     replaceComponentElement(this._cardComponent, this._cardEditComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _addEscListener() {

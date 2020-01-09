@@ -244,6 +244,10 @@ export default class CardEdit extends AbstractSmartComponent {
     }
   }
 
+  _onViewChange() {
+
+  }
+
   _applyFlatpickr() {
     if (this._flatpickr) {
       // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
