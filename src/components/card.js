@@ -1,5 +1,4 @@
 import {formatTime, formatDate} from "../util/time";
-import {MONTH_NAMES} from "../const";
 import AbstractSmartComponent from "./abstract-smart-component";
 
 const createHashtags = (hashtags) => {
