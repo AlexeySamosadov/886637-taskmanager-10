@@ -1,4 +1,4 @@
-import {COLORS, DAYS, MONTH_NAMES} from '../const';
+import {COLORS, DAYS} from '../const';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -95,10 +95,10 @@ const getCardEditTemplate = (task, options = {}) => {
   const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
-  const isBlockSaveButton = (isDateShowing && isRepeatingTask) ||
-    (isRepeatingTask && !isRepeating(isRepeatingTask));
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth]}` : ``;
+  const isBlockSaveButton = (isDateShowing && isRepeatingTask) ||
+    (isRepeatingTask && !isRepeating(activeRepeatingDays));
+  const date = isDateShowing ? formatTime(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;
@@ -187,9 +187,7 @@ export default class CardEdit extends AbstractSmartComponent {
   constructor(task) {
     super();
     this._task = task;
-    this.isDateShowing = !!task.dueDate;
-    this.isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
-    this.activeRepeatingDays = Object.assign({}, task.repeatingDays);
+    this.resetConstructorDate();
     this._flatpickr = null;
 
     this._applyFlatpickr();
@@ -204,18 +202,24 @@ export default class CardEdit extends AbstractSmartComponent {
     });
   }
 
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
+  }
+
   recoveryListeners() {
     this._subscribeOnEvents();
   }
 
   reset() {
-    const task = this._task;
-
-    this.isDateShowing = !!task.dueDate;
-    this.isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
-    this.activeRepeatingDays = Object.assign({}, task.repeatingDays);
-
+    this.resetConstructorDate();
     this.rerender();
+  }
+
+  resetConstructorDate() {
+    this.isDateShowing = !!this._task.dueDate;
+    this.isRepeatingTask = Object.values(this._task.repeatingDays).some(Boolean);
+    this.activeRepeatingDays = Object.assign({}, this._task.repeatingDays);
   }
 
   setEditFormButtonClickListener(handler) {
@@ -242,10 +246,6 @@ export default class CardEdit extends AbstractSmartComponent {
         this.rerender();
       });
     }
-  }
-
-  _onViewChange() {
-
   }
 
   _applyFlatpickr() {
