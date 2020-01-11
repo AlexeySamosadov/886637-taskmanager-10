@@ -95,9 +95,7 @@ const getCardEditTemplate = (task, options = {}) => {
   const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
-
-  const isBlockSaveButton = (isDateShowing && isRepeatingTask) ||
-    (isRepeatingTask && !isRepeating(activeRepeatingDays));
+  const isBlockSaveButton = ((isDateShowing || !isRepeating(activeRepeatingDays)) && (isRepeatingTask));
   const date = isDateShowing ? formatTime(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
