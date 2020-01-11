@@ -2,7 +2,7 @@ import {COLORS, DAYS} from '../const';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {formatTime} from "../util/time";
+import {formatTime, formatDate} from "../util/time";
 import AbstractSmartComponent from "./abstract-smart-component";
 
 const createColorsMarkup = (colors, currentColor) => {
@@ -96,7 +96,7 @@ const getCardEditTemplate = (task, options = {}) => {
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isBlockSaveButton = ((isDateShowing || !isRepeating(activeRepeatingDays)) && (isRepeatingTask));
-  const date = isDateShowing ? formatTime(dueDate) : ``;
+  const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;

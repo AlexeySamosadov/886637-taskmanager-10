@@ -1,4 +1,4 @@
-import {formatTime} from "../util/time";
+import {formatTime, formatDate} from "../util/time";
 import {MONTH_NAMES} from "../const";
 import AbstractSmartComponent from "./abstract-smart-component";
 
@@ -21,7 +21,7 @@ export const getCardTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
+  const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const hashtags = createHashtags(tags);
