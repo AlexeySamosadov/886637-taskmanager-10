@@ -62,12 +62,12 @@ export default class TaskController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceCardEditToCard();
     }
+    document.removeEventListener(`keydown`, this._onEscPress);
   }
 
 
   _replaceCardToCardEdit() {
     this._onViewChange();
-
     replaceComponentElement(this._cardEditComponent, this._cardComponent);
     this._mode = Mode.EDIT;
   }
@@ -86,7 +86,6 @@ export default class TaskController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
       this._replaceCardEditToCard();
-      document.removeEventListener(`keydown`, this._onEscPress);
     }
   }
 }
