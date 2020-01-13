@@ -1,5 +1,5 @@
-import {formatTime, createElement} from "../util";
-import {MONTH_NAMES} from "../const";
+import {formatTime, formatDate} from "../util/time";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const createHashtags = (hashtags) => {
   return Array.from(hashtags)
@@ -16,11 +16,11 @@ const createHashtags = (hashtags) => {
 };
 
 export const getCardTemplate = (task) => {
-  const {description, tags, dueDate, color, repeatingDays} = task;
+  const {description, tags, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth]}` : ``;
+  const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const hashtags = createHashtags(tags);
@@ -53,7 +53,11 @@ export const getCardTemplate = (task) => {
                 </div>
 
                 <div class="card__textarea-wrap">
-                  <p class="card__text">${description}</p>
+                  <p class="card__text">
+                    ${description} </br></br>
+                    ${isArchive ? `<img src="http://sibirinfo.ru/inform/ava/images.jpg" width="30" height="30">` : ` `}
+                    ${isFavorite ? `<img src="https://pp.userapi.com/p-SfbP4fqXN_zwIhMcmZsnEwrLaTK3ew1FqXkQ/1JYvOOD8YvE.jpg?ava=1" width="30" height="30">` : ` `}
+                  </p>
                 </div>
 
                 <div class="card__settings">
@@ -80,9 +84,9 @@ export const getCardTemplate = (task) => {
   );
 };
 
-export default class Card {
+export default class Card extends AbstractSmartComponent {
   constructor(task) {
-    this._element = null;
+    super();
     this._task = task;
   }
 
@@ -90,15 +94,16 @@ export default class Card {
     return getCardTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
 
-    return this._element;
+  setEditButtonClickListener(handler) {
+    this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setArchiveButtonClickListener(handler) {
+    this._element.querySelector(`.card__btn--archive`).addEventListener(`click`, handler);
+  }
+
+  setFavoritesButtonClickListener(handler) {
+    this._element.querySelector(`.card__btn--favorites`).addEventListener(`click`, handler);
   }
 }
