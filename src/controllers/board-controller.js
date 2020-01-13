@@ -91,6 +91,7 @@ export default class BoardController extends AbstractComponent {
     this._loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
   }
 
+
   _onViewChange() {
     this._showedTaskControllers.forEach((it) => it.setDefaultView());
   }
