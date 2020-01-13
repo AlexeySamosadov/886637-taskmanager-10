@@ -91,10 +91,10 @@ export default class BoardController extends AbstractComponent {
     this._loadButtonComponent.setLoadMoreButtonClickListener(OnLoadMoreCards);
   }
 
-
   _onViewChange() {
     this._showedTaskControllers.forEach((it) => it.setDefaultView());
   }
+
 
   _onDataChange(place, oldData, newData) {
     const index = this._renderingTasks.findIndex((it) => it === oldData);
