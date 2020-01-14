@@ -99,9 +99,11 @@ export default class BoardController extends AbstractComponent {
   _onDataChange(place, oldData, newData) {
     const index = this._renderingTasks.findIndex((it) => it === oldData);
 
+
     if (index === -1) {
       return;
     }
+
 
     this._renderingTasks = [].concat(this._renderingTasks.slice(0, index), newData, this._renderingTasks.slice(index + 1));
     place.render(this._renderingTasks[index]);
