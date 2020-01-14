@@ -95,7 +95,6 @@ export default class BoardController extends AbstractComponent {
     this._showedTaskControllers.forEach((it) => it.setDefaultView());
   }
 
-
   _onDataChange(place, oldData, newData) {
     const index = this._renderingTasks.findIndex((it) => it === oldData);
 
@@ -103,7 +102,6 @@ export default class BoardController extends AbstractComponent {
     if (index === -1) {
       return;
     }
-
 
     this._renderingTasks = [].concat(this._renderingTasks.slice(0, index), newData, this._renderingTasks.slice(index + 1));
     place.render(this._renderingTasks[index]);
