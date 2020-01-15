@@ -18,7 +18,6 @@ const renderTasks = (taskListElement, tasks, onDataChange, onViewChange) => {
   });
 };
 
-
 export default class BoardController extends AbstractComponent {
   constructor(container) {
     super();
