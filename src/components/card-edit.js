@@ -187,6 +187,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._task = task;
     this.resetConstructorDate();
     this._flatpickr = null;
+    this._submitHandler = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -205,8 +206,9 @@ export default class CardEdit extends AbstractSmartComponent {
     this._applyFlatpickr();
   }
 
-  recoveryListeners() {
+  recoverListeners() {
     this._subscribeOnEvents();
+    this.setSubmitHandler(this._submitHandler);
   }
 
   reset() {
