@@ -1,14 +1,20 @@
+import {FilterType} from "../const";
+import {getTaskByFilter} from "../util/filter";
+
 export default class Tasks {
   constructor() {
     this._tasks = [];
+    this._activeFilterType = FilterType.ALL;
+
+    this._filterChangeHandlers = [];
   }
 
   getTasks() {
-    return this._tasks;
+    return getTaskByFilter(this._tasks, this._activeFilterType);
   }
 
   getTasksAll() {
-    console.log(`Выдает все таски`);
+    return this._tasks;
   }
 
   setTasks(tasks) {
@@ -16,13 +22,18 @@ export default class Tasks {
   }
 
   setFilter(filterType) {
-    console.log(`Здесь установлен тип фильтра`, filterType)
+    this._activeFilterType = filterType;
+    this._filterChangeHandlers.forEach((handler) => handler());
+  }
+
+  setFilterChangeHandler(handler) {
+    this.__filterChangeHandlers.push(handler);
   }
 
   updateTask(id, task) {
     const index = this._tasks.findIndex((it) => it.id === id);
 
-    if (index = -1) {
+    if (index === -1) {
       return false;
     }
 

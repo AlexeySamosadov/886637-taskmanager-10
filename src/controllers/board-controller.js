@@ -26,7 +26,6 @@ export default class BoardController extends AbstractComponent {
     this._taskModel = tasksModel;
     this._sortedTasks = [];
     this._totalTasksVisible = TASK_VISIBLE;
-
     this._noTaskComponent = new NoTasksComponent();
     this._boardTasksComponent = new BoardTasksComponent();
     this._showedTaskControllers = [];
@@ -81,6 +80,7 @@ export default class BoardController extends AbstractComponent {
 
     const OnLoadMoreCards = () => {
       const renderingTasks = this._taskModel.getTasks();
+
       this._sortedTasks = renderingTasks;
       const prevTaskCount = this._totalTasksVisible;
       this._totalTasksVisible = this._totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
