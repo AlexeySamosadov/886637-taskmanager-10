@@ -20,10 +20,10 @@ const renderTasks = (taskListElement, tasks, onDataChange, onViewChange) => {
 
 
 export default class BoardController extends AbstractComponent {
-  constructor(container) {
+  constructor(container, tasksModel) {
     super();
     this._container = container;
-    this._renderingTasks = [];
+    this._taskModel = tasksModel;
     this._sortedTasks = [];
     this._totalTasksVisible = TASK_VISIBLE;
 
@@ -38,8 +38,8 @@ export default class BoardController extends AbstractComponent {
     this._onViewChange = this._onViewChange.bind(this);
   }
 
-  render(renderingTasks) {
-    this._renderingTasks = renderingTasks;
+  render() {
+    const renderingTasks = this._taskModel.getTasks();
     const isAllCardsArchived = renderingTasks.every((task) => task.isArchive);
     if (isAllCardsArchived) {
       render(this._container.getElement(), this._noTaskComponent);
@@ -49,21 +49,22 @@ export default class BoardController extends AbstractComponent {
     render(this._container.getElement(), sortComponent);
 
     render(this._container.getElement(), this._boardTasksComponent);
-    const newTasks = renderTasks(this._siteBoardTaskElement, this._renderingTasks.slice(0, this._totalTasksVisible), this._onDataChange, this._onViewChange);
+    const newTasks = renderTasks(this._siteBoardTaskElement, renderingTasks.slice(0, this._totalTasksVisible), this._onDataChange, this._onViewChange);
     this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
     this._setLoadMoreButton();
     sortComponent.setSortTypeChangeHandler(this._onSortTypeChange.bind(this));
   }
 
   _onSortTypeChange(sortType) {
+    const renderingTasks = this._taskModel.getTasks();
     switch (sortType) {
       case SortType.DATE_UP:
-        this._sortedTasks = this._renderingTasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+        this._sortedTasks = renderingTasks.slice().sort((a, b) => a.dueDate - b.dueDate);
         break;
       case SortType.DATE_DOWN:
-        this._sortedTasks = this._renderingTasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+        this._sortedTasks = renderingTasks.slice().sort((a, b) => b.dueDate - a.dueDate);
         break;
-      case SortType.DEFAULT: this._sortedTasks = this._renderingTasks.slice();
+      case SortType.DEFAULT: this._sortedTasks = renderingTasks.slice();
         break;
     }
     this._siteBoardTaskElement.innerHTML = ``;
@@ -73,13 +74,14 @@ export default class BoardController extends AbstractComponent {
   }
 
   _setLoadMoreButton() {
-    if (this._totalTasksVisible > this._renderingTasks) {
+    if (this._totalTasksVisible > this._taskModel.getTasks()) {
       return;
     }
     render(this._container.getElement(), this._loadButtonComponent);
 
     const OnLoadMoreCards = () => {
-      this._sortedTasks = this._renderingTasks;
+      const renderingTasks = this._taskModel.getTasks();
+      this._sortedTasks = renderingTasks;
       const prevTaskCount = this._totalTasksVisible;
       this._totalTasksVisible = this._totalTasksVisible + TASK_VISIBLE_BY_BUTTON;
       const newTasks = renderTasks(this._siteBoardTaskElement, this._sortedTasks.slice(prevTaskCount, this._totalTasksVisible), this._onDataChange, this._onViewChange);
@@ -97,15 +99,10 @@ export default class BoardController extends AbstractComponent {
 
 
   _onDataChange(place, oldData, newData) {
-    const index = this._renderingTasks.findIndex((it) => it === oldData);
+    const isSuccess = this._taskModel.updateTask(oldData.id, newData);
 
-
-    if (index === -1) {
-      return;
+    if (isSuccess) {
+      place.render(newData);
     }
-
-
-    this._renderingTasks = [].concat(this._renderingTasks.slice(0, index), newData, this._renderingTasks.slice(index + 1));
-    place.render(this._renderingTasks[index]);
   }
 }
