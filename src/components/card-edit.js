@@ -4,6 +4,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 import {formatTime, formatDate} from "../util/time";
 import AbstractSmartComponent from "./abstract-smart-component";
+import {isOverdueDate, isRepeating} from "../util/common";
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors
@@ -86,15 +87,11 @@ const createHashtags = (hashtags) => {
     .join(`\n`);
 };
 
-const isRepeating = (repeatingDays) => {
-  return Object.values(repeatingDays).some(Boolean);
-};
-
 const getCardEditTemplate = (task, options = {}) => {
   const {description, tags, dueDate, color} = task;
   const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
 
-  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
   const isBlockSaveButton = ((isDateShowing || !isRepeating(activeRepeatingDays)) && (isRepeatingTask));
   const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
@@ -209,6 +206,13 @@ export default class CardEdit extends AbstractSmartComponent {
   recoverListeners() {
     this._subscribeOnEvents();
     this.setSubmitHandler(this._submitHandler);
+  }
+
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`form`)
+      .addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
   }
 
   reset() {

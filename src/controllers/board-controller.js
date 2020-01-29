@@ -35,6 +35,10 @@ export default class BoardController extends AbstractComponent {
     this._setLoadMoreButton = this._setLoadMoreButton.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange.bind(this));
+    this._taskModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -44,14 +48,12 @@ export default class BoardController extends AbstractComponent {
       render(this._container.getElement(), this._noTaskComponent);
       return;
     }
-    const sortComponent = this._sortComponent;
-    render(this._container.getElement(), sortComponent);
+    render(this._container.getElement(), this._sortComponent);
 
     render(this._container.getElement(), this._boardTasksComponent);
     const newTasks = renderTasks(this._siteBoardTaskElement, renderingTasks.slice(0, this._totalTasksVisible), this._onDataChange, this._onViewChange);
     this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
     this._setLoadMoreButton();
-    sortComponent.setSortTypeChangeHandler(this._onSortTypeChange.bind(this));
   }
 
   _onSortTypeChange(sortType) {
@@ -104,5 +106,10 @@ export default class BoardController extends AbstractComponent {
     if (isSuccess) {
       place.render(newData);
     }
+  }
+
+  _onFilterChange() {
+    this._removeTasks();
+    this._renderTasks(this._taskModel.getTasks().slice(0, TASK_VISIBLE));
   }
 }

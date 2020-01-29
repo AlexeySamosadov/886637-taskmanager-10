@@ -27,7 +27,7 @@ export default class Tasks {
   }
 
   setFilterChangeHandler(handler) {
-    this.__filterChangeHandlers.push(handler);
+    this._filterChangeHandlers.push(handler);
   }
 
   updateTask(id, task) {

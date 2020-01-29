@@ -1,5 +1,6 @@
 import {formatTime, formatDate} from "../util/time";
 import AbstractSmartComponent from "./abstract-smart-component";
+import {isOverdueDate} from "../util/common";
 
 const createHashtags = (hashtags) => {
   return Array.from(hashtags)
@@ -17,7 +18,7 @@ const createHashtags = (hashtags) => {
 
 export const getCardTemplate = (task) => {
   const {description, tags, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
-  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate,  new Date());
   const isDateShowing = !!dueDate;
 
   const date = isDateShowing ? formatDate(dueDate) : ``;
