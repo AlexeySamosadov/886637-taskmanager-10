@@ -19,12 +19,12 @@ export default class FilterController {
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
-        count: getTasksByFilter(allTasks, filterType).length,
+        // count: getTasksByFilter(allTasks, filterType).length,
         checked: filterType === this._activeFilterType,
       };
     });
     const oldComponent = this._filterComponent;
-
+    console.log(`filters`, filters);
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
 
