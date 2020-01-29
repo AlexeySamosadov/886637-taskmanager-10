@@ -1,5 +1,5 @@
 import {FilterType} from "../const";
-import {getTaskByFilter} from "../util/filter";
+import {getTasksByFilter} from "../util/filter";
 
 export default class Tasks {
   constructor() {
@@ -10,7 +10,7 @@ export default class Tasks {
   }
 
   getTasks() {
-    return getTaskByFilter(this._tasks, this._activeFilterType);
+    return getTasksByFilter(this._tasks, this._activeFilterType);
   }
 
   getTasksAll() {

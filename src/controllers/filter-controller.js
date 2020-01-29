@@ -1,6 +1,7 @@
 import FilterComponent from '../components/filter';
 import {render, replaceComponentElement} from "../util/render";
 import {FilterType} from "../const";
+import {getTasksByFilter} from "../util/filter";
 
 export default class FilterController {
   constructor(container, taskModel) {
@@ -24,7 +25,7 @@ export default class FilterController {
       };
     });
     const oldComponent = this._filterComponent;
-    console.log(`filters`, filters);
+    // console.log(`filters`, filters);
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
 

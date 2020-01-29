@@ -1,4 +1,5 @@
-import {isOneDay, isOverdueDate, isRepeating} from "./common";
+import {isRepeating} from "./common";
+import {isOneDay, isOverdueDate} from "./time";
 import {FilterType} from "../const";
 
 export const getArchiveTasks = (tasks) => {
@@ -34,10 +35,11 @@ export const getTasksWithHashtags = (tasks) => {
 };
 
 export const getTasksInOneDay = (tasks, date) => {
+  console.log(`tasks`,tasks);
   return tasks.filter((task) => isOneDay(task.dueDate, date));
 };
 
-export const getTaskByFilter = (tasks, filterType) => {
+export const getTasksByFilter = (tasks, filterType) => {
   const nowDate = new Date();
 
   switch (filterType) {

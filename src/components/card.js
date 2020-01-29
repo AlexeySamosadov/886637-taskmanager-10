@@ -1,6 +1,6 @@
 import {formatTime, formatDate} from "../util/time";
 import AbstractSmartComponent from "./abstract-smart-component";
-import {isOverdueDate} from "../util/common";
+import {isOverdueDate} from "../util/time";
 
 const createHashtags = (hashtags) => {
   return Array.from(hashtags)

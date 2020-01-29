@@ -4,7 +4,8 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 import {formatTime, formatDate} from "../util/time";
 import AbstractSmartComponent from "./abstract-smart-component";
-import {isOverdueDate, isRepeating} from "../util/common";
+import {isRepeating} from "../util/common";
+import {isOverdueDate} from "../util/time";
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors

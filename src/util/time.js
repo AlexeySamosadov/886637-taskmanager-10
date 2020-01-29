@@ -8,4 +8,13 @@ const formatDate = (date) => {
   return moment(date).format(`DD MMMM`);
 };
 
-export {formatTime, formatDate};
+const isOverdueDate = (dueDate, date) => {
+  return dueDate < date;
+};
+
+const isOneDay = (dateA, dateB) => {
+  console.log(`dateA`, dateA);
+  return dateA.getDate() === dateB.getDate();
+};
+
+export {formatTime, formatDate, isOverdueDate, isOneDay};
