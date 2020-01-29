@@ -18,7 +18,7 @@ const createHashtags = (hashtags) => {
 
 export const getCardTemplate = (task) => {
   const {description, tags, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
-  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate,  new Date());
+  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
   const isDateShowing = !!dueDate;
 
   const date = isDateShowing ? formatDate(dueDate) : ``;
