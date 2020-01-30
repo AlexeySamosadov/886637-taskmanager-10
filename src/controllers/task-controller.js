@@ -45,6 +45,8 @@ export default class TaskController {
   render(task, mode) {
     const oldCardComponent = this._cardComponent;
     const oldCardEditComponent = this._cardEditComponent;
+    // this._mode = mode;
+    console.log(this._mode);
 
     this._cardComponent = new CardComponent(task);
     this._cardEditComponent = new CardEditComponent(task);
@@ -54,10 +56,6 @@ export default class TaskController {
     cardComponent.getElement();
     cardComponent.setEditButtonClickListener(this._replaceCardToEdit);
     cardComponent.setEditButtonClickListener(this._addEscListener);
-
-    cardEditComponent.getElement();
-    cardEditComponent.setEditFormButtonClickListener(this._replaceEditToCard);
-
     cardComponent.setArchiveButtonClickListener(() => {
       this._onDataChange(this, task, Object.assign({}, task, {
         isArchive: !task.isArchive,
@@ -70,12 +68,40 @@ export default class TaskController {
       }));
     });
 
-    if (oldCardEditComponent && oldCardComponent) {
-      replaceComponentElement(cardComponent, oldCardComponent);
-      replaceComponentElement(cardEditComponent, oldCardEditComponent);
-    } else {
-      render(this._boardTaskElement, cardComponent);
+    cardEditComponent.getElement();
+    cardEditComponent.setEditFormButtonClickListener((evt)=> {
+      evt.preventDefault();
+      console.log(`Сработала кнопка`);
+
+      const data = this._cardEditComponent.getData;
+      this._onDataChange(this, task, data);
+      console.log(`data`, data);
+      // this._replaceEditToCard();
+    });
+
+    cardEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, task, null));
+
+    switch (this._mode) {
+      case Mode.DEFAULT:
+        if (oldCardEditComponent && oldCardComponent) {
+          replaceComponentElement(cardComponent, oldCardComponent);
+          replaceComponentElement(cardEditComponent, oldCardEditComponent);
+        } else {
+          render(this._boardTaskElement, cardComponent);
+        }
+        break;
+      case Mode.ADDING:
+        console.log(`Сработал Мод добавления карточки`);
+        if (oldCardEditComponent && oldCardComponent) {
+          remove(oldCardComponent);
+          remove(oldCardEditComponent);
+        }
+        this._addEscListener();
+        render(this._boardTaskElement, this._cardEditComponent, RenderPosition.AFTERBEGIN);
+        break;
     }
+
+
   }
 
   setDefaultView() {
@@ -93,9 +119,16 @@ export default class TaskController {
   }
 
   _replaceEditToCard() {
+    console.log(`сработал replaceEditToCard`);
     this._cardEditComponent.reset();
     replaceComponentElement(this._cardComponent, this._cardEditComponent);
     this._mode = Mode.DEFAULT;
+  }
+
+  destroy() {
+    remove(this._cardComponent);
+    remove(this._cardEditComponent);
+    document.removeEventListener(`keydown`, this._onEscPress);
   }
 
   _addEscListener() {
@@ -105,6 +138,9 @@ export default class TaskController {
   _onEscPress(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
+      if (this._mode === Mode.ADDING) {
+        this._onDataChange(this, EmptyTask, null);
+      }
       this._replaceEditToCard();
     }
   }

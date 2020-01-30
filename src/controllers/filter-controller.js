@@ -20,12 +20,12 @@ export default class FilterController {
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
-        // count: getTasksByFilter(allTasks, filterType).length,
+        count: getTasksByFilter(allTasks, filterType).length,
         checked: filterType === this._activeFilterType,
       };
     });
+    console.log(`filters`, filters);
     const oldComponent = this._filterComponent;
-    // console.log(`filters`, filters);
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
 
@@ -39,5 +39,9 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._taskModel.setFilter(filterType);
     this._activeFilterType = filterType;
+  }
+
+  _onDataChange() {
+    this.render();
   }
 }

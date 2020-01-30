@@ -13,8 +13,11 @@ const isOverdueDate = (dueDate, date) => {
 };
 
 const isOneDay = (dateA, dateB) => {
-  console.log(`dateA`, dateA);
-  return dateA.getDate() === dateB.getDate();
+  if (dateA) {
+    return dateA.getDate() === dateB.getDate();
+  } else {
+    return false;
+  }
 };
 
 export {formatTime, formatDate, isOverdueDate, isOneDay};
