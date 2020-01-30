@@ -7,6 +7,15 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import {isRepeating} from "../util/common";
 import {isOverdueDate} from "../util/time";
 
+const MIN_DESCRIPTION_LENGTH = 1;
+const MAX_DESCRIPTION_LENGTH = 140;
+
+const isAllowableDescriptionLength = (description) => {
+  const length = description.length;
+
+  return length >= MIN_DESCRIPTION_LENGTH && length <= MAX_DESCRIPTION_LENGTH;
+};
+
 const createColorsMarkup = (colors, currentColor) => {
   return colors
     .map((color) => {
@@ -89,11 +98,13 @@ const createHashtags = (hashtags) => {
 };
 
 const getCardEditTemplate = (task, options = {}) => {
-  const {description, tags, dueDate, color} = task;
-  const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
+  const {tags, dueDate, color} = task;
+  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription} = options;
+  const description = window.he.encode(currentDescription);
+
 
   const isExpired = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
-  const isBlockSaveButton = ((isDateShowing || !isRepeating(activeRepeatingDays)) && (isRepeatingTask));
+  const isBlockSaveButton = ((isDateShowing || !isRepeating(activeRepeatingDays)) && (isRepeatingTask) || !isAllowableDescriptionLength(description));
   const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
@@ -179,6 +190,25 @@ const getCardEditTemplate = (task, options = {}) => {
   );
 };
 
+const parseFormData = (formData) => {
+  const repeatingDays = {};
+  DAYS.forEach((it) => {
+    repeatingDays[it] = false;
+  });
+  formData.getAll(`repeat`).forEach((it)=> {
+    repeatingDays[it] = true;
+  });
+
+  const date = formData.get(`date`);
+  return {
+    description: formData.get(`text`),
+    color: formData.get(`color`),
+    tags: formData.get(`hashtag`),
+    dueDate: date ? new Date(date) : null,
+    repeatingDays,
+  };
+};
+
 export default class CardEdit extends AbstractSmartComponent {
   constructor(task) {
     super();
@@ -186,6 +216,8 @@ export default class CardEdit extends AbstractSmartComponent {
     this.resetConstructorDate();
     this._flatpickr = null;
     this._submitHandler = null;
+    this._deleteButtonClickHandler = null;
+    this._currentDescription = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -196,7 +228,24 @@ export default class CardEdit extends AbstractSmartComponent {
       isDateShowing: this.isDateShowing,
       isRepeatingTask: this.isRepeatingTask,
       activeRepeatingDays: this.activeRepeatingDays,
+      currentDescription: this._task.description,
     });
+  }
+
+  removeElement() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    super.removeElement();
+  }
+
+  getData() {
+    const form = this.getElement().querySelector(`.card__form`);
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
   }
 
   rerender() {
@@ -207,6 +256,14 @@ export default class CardEdit extends AbstractSmartComponent {
   recoverListeners() {
     this._subscribeOnEvents();
     this.setSubmitHandler(this._submitHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.card__delete`)
+      .addEventListener(`click`, handler);
+
+    this._deleteButtonClickHandler = handler;
   }
 
   setSubmitHandler(handler) {
@@ -233,6 +290,17 @@ export default class CardEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+
+    element.querySelector(`.card__text`).addEventListener(`input`,(evt)=>{
+      this._currentDescription = evt.target.value;
+
+      const saveButton = this.getElement().querySelector(`.card__save`);
+      saveButton.disabled = !isAllowableDescriptionLength(this._currentDescription);
+      if (!isAllowableDescriptionLength(this._currentDescription)) {
+        alert(`ТЫ куда так на кнопки жмешь???, удаляй лишние символы!`);
+      }
+    });
+
     element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, ()=>{
       this.isDateShowing = !this.isDateShowing;
       this.rerender();

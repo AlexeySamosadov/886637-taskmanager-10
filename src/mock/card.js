@@ -6,7 +6,7 @@ const DescriptionItems = [
   `Пройти интенсив на соточку`,
 ];
 
-const DefaultRepeatingDays = {
+export const DefaultRepeatingDays = {
   'mo': false,
   'tu': false,
   'we': false,

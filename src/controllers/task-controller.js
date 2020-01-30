@@ -3,13 +3,13 @@ import CardComponent from "../components/card";
 import {render, replaceComponentElement, remove, RenderPosition} from "../util/render";
 import {COLOR} from '../const';
 
-const Mode = {
+export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
 };
 
-const EmptyTask = {
+export const EmptyTask = {
   description: ``,
   dueDate: null,
   repeatingDays: {
@@ -32,7 +32,7 @@ export default class TaskController {
     this._boardTaskElement = boardTaskElement;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
-    this._mode = Mode.DEFAULT;
+    this._mode = null;
     this._cardComponent = null;
     this._cardEditComponent = null;
 
@@ -45,7 +45,7 @@ export default class TaskController {
   render(task, mode) {
     const oldCardComponent = this._cardComponent;
     const oldCardEditComponent = this._cardEditComponent;
-    // this._mode = mode;
+    this._mode = mode;
     console.log(this._mode);
 
     this._cardComponent = new CardComponent(task);
@@ -72,11 +72,12 @@ export default class TaskController {
     cardEditComponent.setEditFormButtonClickListener((evt)=> {
       evt.preventDefault();
       console.log(`Сработала кнопка`);
-
-      const data = this._cardEditComponent.getData;
-      this._onDataChange(this, task, data);
+      const data = this._cardEditComponent.getData();
       console.log(`data`, data);
-      // this._replaceEditToCard();
+      this._onDataChange(this, task, data); // НАдо вернуть восле
+
+
+      this._replaceEditToCard();
     });
 
     cardEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, task, null));
@@ -91,7 +92,6 @@ export default class TaskController {
         }
         break;
       case Mode.ADDING:
-        console.log(`Сработал Мод добавления карточки`);
         if (oldCardEditComponent && oldCardComponent) {
           remove(oldCardComponent);
           remove(oldCardEditComponent);
