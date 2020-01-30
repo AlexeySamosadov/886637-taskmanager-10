@@ -24,7 +24,6 @@ export default class FilterController {
         checked: filterType === this._activeFilterType,
       };
     });
-    console.log(`filters`, filters);
     const oldComponent = this._filterComponent;
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);

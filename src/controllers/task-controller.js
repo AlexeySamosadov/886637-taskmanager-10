@@ -46,7 +46,6 @@ export default class TaskController {
     const oldCardComponent = this._cardComponent;
     const oldCardEditComponent = this._cardEditComponent;
     this._mode = mode;
-    console.log(this._mode);
 
     this._cardComponent = new CardComponent(task);
     this._cardEditComponent = new CardEditComponent(task);
@@ -71,9 +70,7 @@ export default class TaskController {
     cardEditComponent.getElement();
     cardEditComponent.setEditFormButtonClickListener((evt)=> {
       evt.preventDefault();
-      console.log(`Сработала кнопка`);
       const data = this._cardEditComponent.getData();
-      console.log(`data`, data);
       this._onDataChange(this, task, data); // НАдо вернуть восле
 
 
@@ -119,7 +116,6 @@ export default class TaskController {
   }
 
   _replaceEditToCard() {
-    console.log(`сработал replaceEditToCard`);
     this._cardEditComponent.reset();
     replaceComponentElement(this._cardComponent, this._cardEditComponent);
     this._mode = Mode.DEFAULT;

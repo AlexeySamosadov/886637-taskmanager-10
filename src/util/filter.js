@@ -35,7 +35,6 @@ export const getTasksWithHashtags = (tasks) => {
 };
 
 export const getTasksInOneDay = (tasks, date) => {
-  console.log(`tasks`,tasks);
   return tasks.filter((task) => isOneDay(task.dueDate, date));
 };
 

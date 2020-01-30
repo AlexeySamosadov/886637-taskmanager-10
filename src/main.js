@@ -16,7 +16,7 @@ const menuComponent = new MenuComponent();
 menuComponent.getElement().querySelector(`.control__label--new-task`)
   .addEventListener(`click`, ()=>{
     boardController.createTask();
-});
+  });
 render(siteHeaderElement, menuComponent);
 
 const tasks = generateTasks(TASK_TIMES);

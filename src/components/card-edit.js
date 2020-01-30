@@ -291,14 +291,11 @@ export default class CardEdit extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelector(`.card__text`).addEventListener(`input`,(evt)=>{
+    element.querySelector(`.card__text`).addEventListener(`input`, (evt)=>{
       this._currentDescription = evt.target.value;
 
       const saveButton = this.getElement().querySelector(`.card__save`);
       saveButton.disabled = !isAllowableDescriptionLength(this._currentDescription);
-      if (!isAllowableDescriptionLength(this._currentDescription)) {
-        alert(`ТЫ куда так на кнопки жмешь???, удаляй лишние символы!`);
-      }
     });
 
     element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, ()=>{
