@@ -106,10 +106,10 @@ export default class BoardController extends AbstractComponent {
     }
     render(this._container.getElement(), this._loadButtonComponent);
 
-    this._loadButtonComponent.setLoadMoreButtonClickListener(this.OnLoadMoreCards.bind(this));
+    this._loadButtonComponent.setLoadMoreButtonClickListener(this.onLoadMoreCards.bind(this));
   }
 
-  OnLoadMoreCards() {
+  onLoadMoreCards() {
     const renderingTasks = this._taskModel.getTasks();
 
     this._sortedTasks = renderingTasks;

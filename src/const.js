@@ -1,12 +1,12 @@
 export const COLOR = {
   BLACK: `black`,
   YELLOW: `yellow`,
-  BLUE: `blue`,
+  BLUE: `yellow`,
   GREEN: `green`,
   PINK: `pink`,
 };
 
-export const COLORS = [COLOR.BLACK, COLOR.YELLOW, COLOR.BLUE, COLOR.GREEN, COLOR.PINK];
+export const COLORS = [`black`, `yellow`, `yellow`, `green`, `pink`];
 
 export const DAYS = [`mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`];
 

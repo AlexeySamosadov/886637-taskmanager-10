@@ -9,7 +9,6 @@ const getFilterNameById = (id) => {
 
 const createFilterElement = (filter, isChecked) => {
   const {name, count} = filter;
-  // console.log(count);
   return (
     `<input
           type="radio"
