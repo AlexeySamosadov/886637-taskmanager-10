@@ -1,9 +1,14 @@
 import AbstractComponent from "./abstract-component";
 
+const FILTER_ID_PREFIX = `filter__`;
+
+const getFilterNameById = (id) => {
+  return id.substring(FILTER_ID_PREFIX.length);
+};
+
 
 const createFilterElement = (filter, isChecked) => {
   const {name, count} = filter;
-
   return (
     `<input
           type="radio"
@@ -20,7 +25,7 @@ const createFilterElement = (filter, isChecked) => {
 
 const getMainFilterTemplate = (filters) => {
   const filterElements = filters
-    .map((it, i) => createFilterElement(it, i === 0))
+    .map((it) => createFilterElement(it, it.checked))
     .join(`\n`);
   return (
     `<section class="main__filter filter container">
@@ -37,5 +42,12 @@ export default class Filter extends AbstractComponent {
 
   getTemplate() {
     return getMainFilterTemplate(this._filers);
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`change`, (evt)=>{
+      const filterName = getFilterNameById(evt.target.id);
+      handler(filterName);
+    });
   }
 }
